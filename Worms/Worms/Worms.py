@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+from random import randint
 
 allUniv = []
 def getHTMLText(url):
@@ -76,6 +77,9 @@ try:
     url = 'http://www.zuihaodaxue.cn/zuihaodaxuepaiming2018.html'
     html = getHTMLText(url)
     soup = BeautifulSoup(html, "html.parser")
+    url = 'http://www.zuihaodaxue.com/keyanguimopaiming2018.html'
+    html = getHTMLText(url)
+    soup1 = BeautifulSoup(html, "html.parser")
     fillUnivList(soup)
 
     name1=input("排名信息抓取完成，请输入您要比较的第一个大学的名称：")
@@ -109,7 +113,24 @@ try:
 
 
     #生成文章
-    content="                             {}和{}哪家强？99%的中国人都不知道\n\n    近日，关于{}和{}哪个更好在社会上引发了广泛的争议，小伙伴们有的从地理位置优势角度进行分析，有的从二者的强势专业角度进行PK，有的甚至从男女生比例角度进行撕逼。而小编也脑洞大开，决定就基于院校排名的角度和小伙伴们聊聊{}和{}的对比情况，今天小编就带大家来比较一下哪个大学更好。\n\n".format(name1,name2,name1,name2,name1,name2)
+    content=""
+    ran=randint(1,4)
+    if ran==1:
+        content+="                           {}和{}哪家强？99%的中国人都不知道\n\n".format(name1,name2)
+    elif ran==2:
+        content+="                           {}和{}的对比,许多人看完了都大吃一惊\n\n".format(name1,name2)
+    elif ran==3:
+        content+="                           {}、{}，谁更胜一筹？\n\n".format(name1,name2)
+    elif ran==4:
+        content+="                           考{}，还是{}？看完这些再做决定！\n\n".format(name1,name2)
+    ran=randint(1,3)
+    if ran==1:
+        content+="    近日，关于{}和{}哪个更好在社会上引发了广泛的争议，小伙伴们有的从地理位置优势角度进行分析，有的从二者的强势专业角度进行PK，有的甚至从男女生比例角度进行撕逼。而小编也脑洞大开，决定就基于院校排名的角度和小伙伴们聊聊{}和{}的对比情况，今天小编就带大家来比较一下哪个大学更好。\n\n".format(name1,name2,name1,name2)
+    elif ran==2:
+        content+="    {}和{}这两所大学哪所更好经常是人们讨论的话题，有的人列出了往年的分数线，有的人分析起了师资、科研经费。今天小编决定就基于院校排名的角度和小伙伴们聊聊{}和{}的对比情况，今天小编就带大家来比较一下哪个大学更好。\n\n".format(name1,name2,name1,name2)
+    else:
+        content+="    高三的学生不仅仅面临高考复习的压力，还面临着选择院校的烦恼。{}和{}，究竟选择哪个呢？今天小编决定就基于院校排名的角度和小伙伴们聊聊{}和{}的对比情况，今天小编就带大家来比较一下哪个大学更好。\n\n".format(name1,name2,name1,name2)
+ 
     content+="    首先我们来看一看这两所大学的简介：\n    首先是{}：{}\n\n    接下来我们看一看{}：{}\n".format(name1,result1,name2,result2)
     content+="    看完了简介之后，不知道大家对这两所学校的看法有没有改变呢？好的，接下来我们就要正式开始比较了！！！\n\n"
     content+="    在最新版的中国最好大学排行榜中,{}排在全国第{}名，而{}排在全国第{}名！！！\n".format(name1,str(paiming1),name2,str(paiming2))
@@ -123,6 +144,7 @@ try:
         content+="    由此可见，两所学校的实力在伯仲之间，从排名上难以分出差距，{}在排名上取得了微弱的优势。\n\n".format(name1 if paiming1<paiming2 else name2)
     else:
         content+="    由此可见，两所学校的差距并不是很大，{}在排名上取得了一定的优势。\n\n".format(name1 if paiming1<paiming2 else name2)
+   
 
     #分数分析
     content+="    除此之外，小编还从软科中国最好大学排名网上获得了两所学校的综合评分，{}获得了{}分，而{}获得了{}分，两所学校的评分差了{:.1f}分。".format(name1,mark1,name2,mark2,abs(mark1-mark2))
@@ -134,7 +156,34 @@ try:
         content+="所以，这两所学校在评分上有着较大的差距。"
     else:
         content+="由此可见，这两个学校在评分上的差距是巨大的。"
+ #科研规模分析
+    #数据处理
+    allUniv=[]
+    fillUnivList(soup1)
 
+    paiming1=0
+    paiming2=0
+    mark1=0
+    mark2=0
+    bingo=0
+
+    #获取大学排名
+    for univ in allUniv:
+        if name1==univ[1]:
+            paiming1=eval(univ[0])
+            mark1=eval(univ[3])
+            bingo+=1
+        elif name2==univ[1]:
+            paiming2=eval(univ[0])
+            mark2=eval(univ[3])
+            bingo+=1
+    if bingo<2:
+        raise CustomError("No such university!")
+
+
+    content+="\n\n    不过，单论综合排名的话，每一家排名机构的评比方法都不同，所以这个排名也只是参考。不过，别忘了有一些硬指标是无法被忽略的，那就是高校的科研规模。"
+    content+="经过数据查询可得知，{}的科研规模全国第{}，发表的论文总数为{}，而{}的科研规模全国第{}，发表的论文总数为{}，".format(name1,paiming1,mark1,name2,paiming2,mark2)
+    content+="所以{}在科研规模上还是更胜一筹的！".format(name1 if paiming1<paiming2 else name2)
     content+="\n\n    好的，关于{}和{}这两所大学的排名分析就到这里了。不过小编在此提醒大家，排名只是参考，选择还是要看自己的兴趣，欢迎大家在评论区发表自己的看法！".format(name1,name2)
 
     #打印
