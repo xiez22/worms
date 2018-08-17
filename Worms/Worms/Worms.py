@@ -123,6 +123,7 @@ try:
         content+="                           {}、{}，谁更胜一筹？\n\n".format(name1,name2)
     elif ran==4:
         content+="                           考{}，还是{}？看完这些再做决定！\n\n".format(name1,name2)
+    title=content.replace(" ","").replace("\n","")+".txt"
     ran=randint(1,3)
     if ran==1:
         content+="    近日，关于{}和{}哪个更好在社会上引发了广泛的争议，小伙伴们有的从地理位置优势角度进行分析，有的从二者的强势专业角度进行PK，有的甚至从男女生比例角度进行撕逼。而小编也脑洞大开，决定就基于院校排名的角度和小伙伴们聊聊{}和{}的对比情况，今天小编就带大家来比较一下哪个大学更好。\n\n".format(name1,name2,name1,name2)
@@ -192,7 +193,7 @@ try:
     p=input("请输入相应的数字，1代表保存 ，2代表不保存:")
     if p=="1":
         os.makedirs("D:\\AutoSave",exist_ok=True)
-        fpo=open("D:\\AutoSave\\"+name1+"和"+name2+"的比较.txt","wt+",encoding='utf-8')
+        fpo=open("D:\\AutoSave\\"+title,"wt+",encoding='utf-8')
         fpo.write(content)
         fpo.close()
         print("保存成功！")
